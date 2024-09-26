@@ -1,15 +1,20 @@
-import {View, Text, StyleSheet, Pressable} from 'react-native';
-import React, {useEffect, useState} from 'react';
 import {
-  ScrollView,
-  TextInput,
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
   TouchableOpacity,
-} from 'react-native-gesture-handler';
+} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {FlatList, ScrollView, TextInput} from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
-import firestore, {updateDoc} from '@react-native-firebase/firestore';
+import firestore, {
+  loadBundle,
+  updateDoc,
+} from '@react-native-firebase/firestore';
 import {number, object, string} from 'yup';
 import {useFormik} from 'formik';
 import {useDispatch, useSelector} from 'react-redux';
@@ -19,11 +24,21 @@ import {
   addproduct,
   deleteproduct,
   getproduct,
+  Getuserdata,
+  Storegaedata,
   updateproduct,
 } from '../../Container/Redux/Action/product.action';
 import {getColor} from '../../Container/Redux/Slice/Color.slice';
 import {getBrand} from '../../Container/Redux/Slice/Brand.slice';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import Fontisto from 'react-native-vector-icons/Fontisto';
+import Feather from 'react-native-vector-icons/Feather';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import ImagePicker from 'react-native-image-crop-picker';
+import {Image} from 'react-native-elements';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
+const items1 = [''];
 export default function Product() {
   const [modalVisible, setModalVisible] = useState(false);
   const [open, setOpen] = useState(false);
@@ -39,12 +54,13 @@ export default function Product() {
   const [open3, setOpen3] = useState(false);
   const [value3, setValue3] = useState(null);
   const [items2, setitems2] = useState([]);
-
+  const refRBSheet = useRef([]);
   const [open4, setOpen4] = useState(false);
   const [value4, setValue4] = useState(null);
   const [update, setupdate] = useState(null);
   const [category, setcategory] = useState([]);
   const [Subcategory, setSubcategory] = useState([]);
+  const [image, setimage] = useState('');
 
   const categoryData = useSelector(state => state.category);
   // console.log("4..................",categoryData);
@@ -53,7 +69,7 @@ export default function Product() {
   //  console.log("4..................",subcategoryData.subCategorydata);
 
   const productdata = useSelector(state => state.product);
-  // console.log("productttttttttttttttttttttttt",productdata);
+  console.log('productttttttttttttttttttttttt', productdata);
 
   const colordata = useSelector(state => state.color);
   //  console.log("productttttttttttttttttttttttt",colordata);
@@ -69,6 +85,9 @@ export default function Product() {
   }, []);
 
   const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getproduct());
+  }, []);
 
   let userSchema = object({
     name: string()
@@ -98,9 +117,10 @@ export default function Product() {
     onSubmit: async (values, {resetForm}) => {
       // console.log('hhhhhhh');
       setModalVisible(!modalVisible);
-      // console.log(values);
+      console.log('sdfsdfsdf', values);
 
       handleSubmit1(values);
+
       resetForm();
     },
   });
@@ -142,13 +162,21 @@ export default function Product() {
   };
 
   const handleSubmit1 = async data => {
+
+    console.log("dydasdasvdavsd",data);
+    
+   
     if (update) {
-      dispatch(updateproduct(data));
+     
+      dispatch(updateproduct({...data,url:image}));
     } else {
-      dispatch(addproduct(data));
+     
+      dispatch(addproduct({...data,url:image}));
     }
 
     setupdate(null);
+    setimage("")
+   
   };
 
   const handleDelete = async id => {
@@ -160,6 +188,7 @@ export default function Product() {
     setModalVisible(true);
     setValues(data);
     setupdate(data.id);
+    setimage(data.url)
     // console.log("vvvvV",data);
     // setSubcategory(data.category_id);
   };
@@ -177,6 +206,81 @@ export default function Product() {
 
   // console.log('rrrr', errors);
   // console.log('sssss', values);
+
+  const renderItem = ({item, index, refRBSheet}) => {
+    return (
+      <View>
+        <RBSheet ref={ref => (refRBSheet.current[index] = ref)}>
+          <View style={style.bottomSheetContainer}>
+            <View style={style.bottommini}>
+              <View style={style.bottomcover}>
+                <View style={{flexDirection: 'row'}}>
+                  <View style={{marginTop: 10, marginLeft: 10}}>
+                    <TouchableOpacity>
+                      <Fontisto name="close-a" size={15} color="#A9AEB1" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <View style={style.bottomiconhead}>
+                  <View>
+                    <TouchableOpacity
+                      style={style.imagecircle2}
+                      onPress={() => handleCamera()}>
+                      <Feather name="camera" size={24} color="#DB3022" />
+                      <View style={{marginTop: 10}}>
+                        <Text>Camera</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                  <View>
+                    <TouchableOpacity
+                      style={style.imagecircle2}
+                      onPress={() => handleGallery()}>
+                      <MaterialCommunityIcons
+                        name="image-outline"
+                        size={24}
+                        color="#DB3022"
+                      />
+                      <View style={{marginTop: 10}}>
+                        <Text>Gallery</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+        </RBSheet>
+      </View>
+      //  {item + 1}
+    );
+  };
+
+  const handleCamera = () => {
+    console.log('dsjkdcsdjdc');
+
+    ImagePicker.openCamera({
+      width: 300,
+      height: 400,
+      cropping: true,
+    }).then(image => {
+      console.log("hfhkhkfghgf",image);
+      setimage(image.path);
+    });
+  };
+
+  const handleGallery = () => {
+    console.log('dsjkdcsdjdc');
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true,
+    }).then(image => {
+      console.log(image);
+      setimage(image.path);
+    });
+  };
 
   return (
     <ScrollView style={{position: 'relative'}}>
@@ -321,6 +425,24 @@ export default function Product() {
               {errors.desc && touched.desc ? errors.desc : ''}
             </Text>
 
+            <View style={style.addphoto}>
+              <TouchableOpacity onPress={() => refRBSheet.current[0]?.open()}>
+                <Text style={{textAlign: 'center'}}>+ ADD PHOTO</Text>
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+          style={style.profilecircle}
+          onPress={() => refRBSheet.current[0]?.open()}>
+             {
+                     image ?  
+                      <Image source={{uri:image}} style={{width:90,height:90}} />
+                      :
+                      <FontAwesome name="user" size={100} color="#A9AEB1" />
+                    }
+         
+        </TouchableOpacity>
+
             <Pressable style={style.submitbutton} onPress={handleSubmit}>
               <Text
                 style={{textAlign: 'center', paddingTop: 7, color: 'white'}}>
@@ -365,6 +487,10 @@ export default function Product() {
               <Text style={style.listtext}>{v.name}</Text>
               <Text style={style.listtext}>{v.price}</Text>
               <Text style={style.listtext}>{v.desc}</Text>
+            
+                      <Image source={{uri: v.url}} style={{width :100, height : 90}} />
+                      
+                   
             </View>
 
             <View style={{flexDirection: 'row', marginRight: 10}}>
@@ -388,6 +514,14 @@ export default function Product() {
           </View>
         ))}
       </View>
+
+      <View style={{flex: 1}}>
+        <FlatList
+          data={items1}
+          renderItem={props => renderItem({...props, refRBSheet})}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
     </ScrollView>
   );
 }
@@ -403,6 +537,15 @@ const style = StyleSheet.create({
     borderRadius: 20,
     elevation: 4,
     backgroundColor: '#F194FF',
+  },
+
+  addphoto: {
+    width: 120,
+    padding: 7,
+    height: 35,
+    borderRadius: 10,
+    elevation: 2,
+    backgroundColor: 'white',
   },
 
   submitbutton: {
@@ -425,6 +568,15 @@ const style = StyleSheet.create({
     shadowRadius: 4,
     elevation: 0.5,
     color: 'black',
+  },
+  profilecircle: {
+    width: 90,
+    height: 90,
+    borderRadius: 80,
+    borderWidth: 0,
+    backgroundColor: '#DDDFE0',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   centeredView: {
@@ -466,6 +618,12 @@ const style = StyleSheet.create({
     marginTop: 70,
     // backgroundColor : 'white',
   },
+  imagecircle2: {
+    width: 50,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 
   listtext: {
     fontSize: 20,
@@ -501,6 +659,36 @@ const style = StyleSheet.create({
 
   dropdown4: {
     zIndex: 999,
+  },
+  bottommini: {
+    rowGap: 10,
+    marginTop: 5,
+  },
+  bottomSheetContainer: {
+    margin: 20,
+  },
+  bottomSheetText: {
+    textAlign: 'center',
+    fontSize: 20,
+    color: '#000',
+    marginTop: 5,
+  },
+  bottomcover: {
+    width: '100%',
+    height: 200,
+  },
+  bottomiconhead: {
+    width: '85%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginLeft: 28,
+    marginTop: 55,
+  },
+  bottomTextView: {
+    width: '90%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginLeft: 16,
   },
 
   // dropdown2: {

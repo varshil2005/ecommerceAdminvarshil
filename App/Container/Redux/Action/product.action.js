@@ -1,79 +1,283 @@
-import firestore, { updateDoc } from '@react-native-firebase/firestore';
-import { ADDPRODUCT, DELETEPRODUCT, PRODUCTDATA, UPDATEPRODUCT } from '../Actiontype';
+import firestore, {updateDoc} from '@react-native-firebase/firestore';
+import {
+  ADDPRODUCT,
+  DELETEPRODUCT,
+  PRODUCTDATA,
+  UPDATEPRODUCT,
+} from '../Actiontype';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import storage from '@react-native-firebase/storage';
 
-export const getproduct = () => async(dispatch) => {
-    try {
-        let productdata = [];
-        await firestore()
-          .collection('Product')
-          .get()
-          .then(querySnapshot => {
-            // console.log('Total users: ', querySnapshot.size);
-    
-            querySnapshot.forEach(documentSnapshot => {
-            //   console.log(
-            //     'gggg',
-            //     'User ID: ',
-            //     documentSnapshot.id,
-            //     documentSnapshot.data(),
-            //   );
-    
-              productdata.push({
-                id: documentSnapshot.id,
-                ...documentSnapshot.data(),
-              });
-            });
+
+const initialstate = {
+  isLoading: false,
+  productdata: [],
+  error: null,
+};
+
+export const getproduct = () => async dispatch => {
+  try {
+    let productdata = [];
+    await firestore()
+      .collection('Product')
+      .get()
+      .then(querySnapshot => {
+        // console.log('Total users: ', querySnapshot.size);
+
+        querySnapshot.forEach(documentSnapshot => {
+          console.log(
+            'gggg',
+            'User ID: ',
+            documentSnapshot.id,
+            documentSnapshot.data(),
+          );
+
+          productdata.push({
+            id: documentSnapshot.id,
+            ...documentSnapshot.data(),
           });
-          dispatch({type : PRODUCTDATA , payload : productdata})
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-
-export const addproduct  = (data) => async(dispatch) => {
-    try {
-        await firestore()
-        .collection('Product')
-        .add(data)
-        .then((doc) => {
-          console.log('Product added!');
-          dispatch({type : ADDPRODUCT , payload : {...data , id : doc.id}});
         });
-    } catch (error) {
-        console.log(error);
-    }
-}
+      });
+    dispatch({type: PRODUCTDATA, payload: productdata});
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-export const deleteproduct = (id) => async(dispatch) => {
-    try {
-        
-        await firestore()
-        .collection('Product')
-        .doc(id)
-        .delete()
-        .then((doc) => {
-          console.log('User deleted!');
-          dispatch({type :DELETEPRODUCT , payload : id})
-        });
-    } catch (error) {
-        console.log(error);
-    }
-}
+export const addproduct = data => async dispatch => {
+  try {
+    console.log("asdasddasdasd",data);
+    
+    await firestore()
+      .collection('Product')
+      .add(data)
+      .then(doc => {
+        console.log('Product added!');
+        dispatch({type: ADDPRODUCT, payload: {...data, id: doc.id}});
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-export const updateproduct = (data) => async(dispatch) => {
-    try {
-        const temp = {...data}
-        delete temp.id;
-        await firestore()
+export const deleteproduct = id => async dispatch => {
+  try {
+    await firestore()
+      .collection('Product')
+      .doc(id)
+      .delete()
+      .then(doc => {
+        console.log('User deleted!');
+        dispatch({type: DELETEPRODUCT, payload: id});
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateproduct = data => async dispatch => {
+  try {
+    console.log('kkkkkkkkkkkkkkkkk', data);
+    
+
+    if (data.url === "") {
+      console.log("hjkhjkhjkhkl");
+      
+      await firestore()
         .collection('Product')
         .doc(data.id)
-        .set(temp)
+        .update({
+          ...data,
+          url: data.url,
+          Brand_id: data.Brand_id,
+          Color_id: data.Color_id,
+          Subcategory_id: data.Subcategory_id,
+          category_id: data.category_id,
+          desc: data.desc,
+          name: data.name,
+          price: data.price,
+        })
         .then(() => {
           console.log('User updated!');
-          dispatch({type : UPDATEPRODUCT , payload : data})
+          dispatch({
+            type: UPDATEPRODUCT,
+            payload: {
+              ...data,
+              url: data.url,
+              Brand_id: data.Brand_id,
+              Color_id: data.Color_id,
+              Subcategory_id: data.Subcategory_id,
+              category_id: data.category_id,
+              desc: data.desc,
+              name: data.name,
+              price: data.price,
+            },
+          });
         });
-    } catch (error) {
-        console.log(error);
+
+      // await firestore()
+      //   .collection('Product')
+      //   .doc(data.id)
+      //   .set(temp)
+      //   .then(() => {
+      //     console.log('User updated!');
+      //     dispatch({
+      //       type: UPDATEPRODUCT,
+      //       payload: {
+      //         ...data,
+      //         url: data.url,
+      //         Brand_id: data.Brand_id,
+      //         Color_id: data.dtatattatattatatata,
+      //         Subcategory_id: data.Subcategory_id,
+      //         category_id: data.category_id,
+      //         desc: data.desc,
+      //         name: data.name,
+      //         price: data.price,
+      //       },
+      //     });
+      //   });
+    } else {
+      let check = data.url.split('/')[0];
+      console.log('checkcjffsda', check);
+
+      // console.log('AFAFASDFASDF', data?.imagename);
+
+      if (check === 'https') {
+        await firestore()
+          .collection('Product')
+          .doc(data.id)
+          .update({
+        
+            url: data.url,
+            Brand_id: data.Brand_id,
+            Color_id: data.Color_id,
+            Subcategory_id: data.Subcategory_id,
+            category_id: data.category_id,
+            desc: data.desc,
+            name: data.name,
+            price: data.price,
+          })
+          .then(() => {
+            console.log('User updated!');
+            dispatch({
+              type: UPDATEPRODUCT,
+              payload: {
+                url: data.url,
+                Brand_id: data.Brand_id,
+                Color_id: data.Color_id,
+                Subcategory_id: data.Subcategory_id,
+                category_id: data.category_id,
+                desc: data.desc,
+                name: data.name,
+                price: data.price,
+              },
+            });
+          });
+
+          // await firestore()
+          // .collection('Product')
+          // .doc(data.id)
+          // .set(temp)
+          // .then(() => {
+          //   console.log('User updated!');
+          //   dispatch({
+          //     type: UPDATEPRODUCT,
+          //     payload: {
+          //       url: data.url,
+          //       Brand_id: data.Brand_id,
+          //       Color_id: data.dtatattatattatatata,
+          //       Subcategory_id: data.Subcategory_id,
+          //       category_id: data.category_id,
+          //       desc: data.desc,
+          //       name: data.name,
+          //       price: data.price,
+          //     },
+          //   });
+          // });
+      } else {
+        console.log('lllllll', data);
+
+        if (data?.imagename) {
+          const reference = await storage().ref('/users/' + data?.imagename);
+          reference.delete();
+        }
+        const arr = data.url.split('/');
+
+        console.log(arr[arr.length - 1]);
+
+        const Rno = Math.floor(Math.random() * 10000);
+
+        const filename = Rno + arr[arr.length - 1];
+        console.log('finamjaisfhasf', filename);
+
+        const reference = await storage().ref('/users/' + filename);
+        console.log('referrrr', reference);
+
+        const task = await reference.putFile(data.url);
+
+        const url = await storage()
+          .ref('/users/' + filename)
+          .getDownloadURL();
+        console.log('urlurlrurl', url);
+
+        await firestore()
+          .collection('Product')
+          .doc(data.id)
+          .update({
+           
+            url: url,
+            Brand_id: data.Brand_id,
+            Color_id: data.Color_id,
+            Subcategory_id: data.Subcategory_id,
+            category_id: data.category_id,
+            desc: data.desc,
+            name: data.name,
+            price: data.price,
+            imagename : filename
+          })
+          .then(() => {
+            console.log('User updated!');
+            dispatch({
+              type: UPDATEPRODUCT,
+              payload: {
+                url: url,
+                Brand_id: data.Brand_id,
+                Color_id: data.Color_id,
+                Subcategory_id: data.Subcategory_id,
+                category_id: data.category_id,
+                desc: data.desc,
+                name: data.name,
+                price: data.price,
+                imagename: filename,
+              },
+            });
+          });
+
+          // await firestore()
+          // .collection('Product')
+          // .doc(data.id)
+          // .set({temp, imagename: filename})
+          // .then(() => {
+          //   console.log('User updated!');
+          //   dispatch({
+          //     type: UPDATEPRODUCT,
+          //     payload: {
+          //       url: data.url,
+          //       Brand_id: data.Brand_id,
+          //       Color_id: data.dtatattatattatatata,
+          //       Subcategory_id: data.Subcategory_id,
+          //       category_id: data.category_id,
+          //       desc: data.desc,
+          //       name: data.name,
+          //       price: data.price,
+          //       imagename: filename
+          //     },
+          //   });
+          // });
+      }
     }
-}
+  } catch (error) {
+    console.log("rerwerwerwe",error);
+    
+  }
+};
