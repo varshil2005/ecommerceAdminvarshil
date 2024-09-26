@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "40650919837",
+    "project_id": "ecommerceadmin-560a1",
+    "storage_bucket": "ecommerceadmin-560a1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:40650919837:android:2b009f600e187a458da974",
+        "android_client_info": {
+          "package_name": "com.ecommerceadminvarshil"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZRz9yxsIgcZMi8KWW33HaCgLqEy3GUYE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
