@@ -40,6 +40,10 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const items1 = [''];
 export default function Product() {
+  useEffect(() => {
+    dispatch(getproduct());
+  }, []);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [open, setOpen] = useState(false);
   const [data, setdata] = useState([]);
@@ -61,6 +65,7 @@ export default function Product() {
   const [category, setcategory] = useState([]);
   const [Subcategory, setSubcategory] = useState([]);
   const [image, setimage] = useState('');
+
 
   const categoryData = useSelector(state => state.category);
   // console.log("4..................",categoryData);
@@ -85,9 +90,7 @@ export default function Product() {
   }, []);
 
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getproduct());
-  }, []);
+
 
   let userSchema = object({
     name: string()
@@ -118,33 +121,24 @@ export default function Product() {
       // console.log('hhhhhhh');
       setModalVisible(!modalVisible);
       console.log('sdfsdfsdf', values);
+      let useData = ""
 
-      handleSubmit1(values);
+      if (image === "") {
+        if (productdata.productdata.url) {
+          useData = productdata.productdata.url
+        }
+
+      } else {
+        useData = image
+      }
+
+      handleSubmit1({...values,url : useData});
 
       resetForm();
     },
   });
 
-  const getCategory = async () => {
-    //   let categorydata = [];
-    //   await firestore()
-    //     .collection('Category')
-    //     .get()
-    //     .then(querySnapshot => {
-    //       console.log('Total users: ', querySnapshot.size);
-    //       querySnapshot.forEach(documentSnapshot => {
-    //         console.log('jjjjj', 'User ID: ', documentSnapshot.id);
-    //         categorydata.push({
-    //           Id: documentSnapshot.id,
-    //           ...documentSnapshot.data(),
-    //         });
-    //         //   setcategory(categorydata);
-    //         console.log('lllllllll', categorydata);
-    //       });
-    //       setcategory(categorydata);
-    //     });
-    // setdata(categorydata);
-  };
+
 
   // const getsubcategory = (id) => {
 
@@ -158,7 +152,7 @@ export default function Product() {
   const getData = async () => {
     dispatch(getproduct());
     setdata(productdata);
-    // console.log('Data', productdata);
+    console.log('Data', productdata);
   };
 
   const handleSubmit1 = async data => {
@@ -168,10 +162,10 @@ export default function Product() {
    
     if (update) {
      
-      dispatch(updateproduct({...data,url:image}));
+      dispatch(updateproduct(data));
     } else {
      
-      dispatch(addproduct({...data,url:image}));
+      dispatch(addproduct(data));
     }
 
     setupdate(null);
