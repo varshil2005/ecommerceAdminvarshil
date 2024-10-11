@@ -10,6 +10,9 @@ import Categoryf from '../../Container/CategoryFj/Categoryf';
 import Counter from '../../Container/Counter/Counter';
 import Brand from '../../Container/Brand/Brand';
 import Color from '../../Container/Color/Color';
+import Order from '../../Container/Order/Order';
+import OrderDeatils from '../../Container/OrderDetails/OrderDeatils';
+import { NavigationContainer } from '@react-navigation/native';
 
 
 const Drawer = createDrawerNavigator();
@@ -25,6 +28,10 @@ export default function Drawer1() {
             <Drawer.Screen name="counter" component={Counter} />
             <Drawer.Screen name="Brand" component={Brand} />
             <Drawer.Screen name="Color" component={Color} />
+            <Drawer.Screen name="Order" component={Order} />
+            <Drawer.Screen name="OrderDeatils" component={OrderDeatils} />
+            
+           
         </Drawer.Navigator>
     )
 }

@@ -6,6 +6,7 @@ import { productreducer } from "./product.reducer"
 import Brand from "../../Brand/Brand"
 import BrandSlice from "../Slice/Brand.slice"
 import ColorSlice from "../Slice/Color.slice"
+import OrderSlice  from "../Slice/Order.Slice"
 
 export const rootReducer  = combineReducers({
     count : counterreader,
@@ -13,5 +14,6 @@ export const rootReducer  = combineReducers({
     subcategory : subCategoryReucer,
     product : productreducer,
     Brand : BrandSlice,
-    color : ColorSlice
+    color : ColorSlice,
+    order : OrderSlice
 })

@@ -40,9 +40,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const items1 = [''];
 export default function Product() {
-  useEffect(() => {
-    dispatch(getproduct());
-  }, []);
+
 
   const [modalVisible, setModalVisible] = useState(false);
   const [open, setOpen] = useState(false);
@@ -66,6 +64,18 @@ export default function Product() {
   const [Subcategory, setSubcategory] = useState([]);
   const [image, setimage] = useState('');
 
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // getData();
+   
+    dispatch(getcategory());
+    dispatch(subCategory());
+    dispatch(getColor())
+    dispatch(getBrand());
+    dispatch(getproduct());
+   
+  }, []);
 
   const categoryData = useSelector(state => state.category);
   // console.log("4..................",categoryData);
@@ -81,15 +91,9 @@ export default function Product() {
 
   const branddata = useSelector(state => state.Brand);
   console.log('productttttttttttttttttttttttt', branddata);
-  useEffect(() => {
-    getData();
-    dispatch(getcategory());
-    dispatch(subCategory());
-    dispatch(getColor());
-    dispatch(getBrand());
-  }, []);
 
-  const dispatch = useDispatch();
+
+
 
 
   let userSchema = object({
@@ -149,11 +153,11 @@ export default function Product() {
 
   // };
 
-  const getData = async () => {
-    dispatch(getproduct());
-    setdata(productdata);
-    console.log('Data', productdata);
-  };
+  // const getData = async () => {
+  //   dispatch(getproduct());
+   
+  //   console.log('Data', productdata);
+  // };
 
   const handleSubmit1 = async data => {
 
@@ -162,12 +166,14 @@ export default function Product() {
    
     if (update) {
      
-      dispatch(updateproduct(data));
+    dispatch(updateproduct(data));
     } else {
      
-      dispatch(addproduct(data));
+   dispatch(addproduct(data));
     }
 
+
+    dispatch(getproduct())
     setupdate(null);
     setimage("")
    
@@ -175,7 +181,7 @@ export default function Product() {
 
   const handleDelete = async id => {
     dispatch(deleteproduct(id));
-    getData(data);
+    // getData(data); 
   };
 
   const handleedit = async data => {
@@ -183,6 +189,8 @@ export default function Product() {
     setValues(data);
     setupdate(data.id);
     setimage(data.url)
+    setdata(data);
+    dispatch(getproduct())
     // console.log("vvvvV",data);
     // setSubcategory(data.category_id);
   };
@@ -261,6 +269,7 @@ export default function Product() {
     }).then(image => {
       console.log("hfhkhkfghgf",image);
       setimage(image.path);
+      refRBSheet.current[0]?.close()
     });
   };
 
@@ -273,6 +282,7 @@ export default function Product() {
     }).then(image => {
       console.log(image);
       setimage(image.path);
+      refRBSheet.current[0]?.close()
     });
   };
 
@@ -482,7 +492,7 @@ export default function Product() {
               <Text style={style.listtext}>{v.price}</Text>
               <Text style={style.listtext}>{v.desc}</Text>
             
-                      <Image source={{uri: v.url}} style={{width :100, height : 90}} />
+                <Image source={{uri: v.url}} style={{width :100, height : 90}} />
                       
                    
             </View>
