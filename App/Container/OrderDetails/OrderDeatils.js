@@ -13,7 +13,7 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 // import { horizontalScale, moderateScale, verticalScale } from '../../../assets/metrics/Metrics';
 import {useDispatch, useSelector} from 'react-redux';
-import {GetOrder} from '../Redux/Slice/Order.Slice';
+import {GetOrder, UpdateStatus} from '../Redux/Slice/Order.Slice';
 import {getBag} from '../Redux/Slice/Cart.Slice';
 import {getproduct} from '../Redux/Action/product.action';
 import {getColor} from '../Redux/Slice/Color.slice';
@@ -34,7 +34,11 @@ export default function OrderDeatils({route, navigation}) {
     {label: 'Cancel', value: 'Cancel'},
 
   ]);
+  const [status,setstatus] = useState(null);
 
+
+
+  
 
   const dispatch = useDispatch();
 
@@ -55,6 +59,12 @@ export default function OrderDeatils({route, navigation}) {
 
   console.log('dsaeee', FilterCart);
 
+  
+const handleUpdate = () => {
+  console.log("fdssdf",status);
+ 
+dispatch(UpdateStatus({newdata : {status,data : route.params} , Olddata : route.params}))
+}
   //
   //   const Order = ({ v }) => (
   //     <View style={styles.ViewOrder}>
@@ -141,6 +151,9 @@ export default function OrderDeatils({route, navigation}) {
           setOpen={setOpen}
           setValue={setValue}
           setItems={setItems}
+          onChangeValue={(values, index) => {
+            setstatus(values)
+          }}
           style = {styles.drop}
           placeholder={'Choose Status'}
         />
@@ -151,6 +164,12 @@ export default function OrderDeatils({route, navigation}) {
         scrollEnabled={false}
         // horizontal={true}
       />
+
+      <View style={{marginTop :30}}>
+        <TouchableOpacity style = {{width :90,backgroundColor:'skyblue',height :40}} onPress={() => handleUpdate()}> 
+          <Text style ={{textAlign:'center',padding:10,color : 'white'}}>Done</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }

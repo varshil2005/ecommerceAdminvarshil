@@ -53,32 +53,32 @@ const DataStructure = ({v, n}) => (
     <View style={Styles.orderDatamainBody}>
       <View style={{marginTop: 6}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <Text style={Styles.orderData1}>{v.OrederNo}</Text>
-          <Text style={Styles.orderData2}>{v.orderDate}</Text>
+          <Text style={Styles.orderData1}>{v?.OrederNo}</Text>
+          <Text style={Styles.orderData2}>{v?.orderDate}</Text>
         </View>
 
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <Text style={Styles.orderData2}>Tracking number:</Text>
-          <Text style={Styles.orderData1}>{v.tracking_number}</Text>
+          <Text style={Styles.orderData1}>{v?.tracking_number}</Text>
         </View>
 
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{flexDirection: 'row'}}>
             <Text style={Styles.orderData2}>Quantity : </Text>
-            <Text style={Styles.orderData1}>
+            {/* <Text style={Styles.orderData1}>
               {v?.cart.reduce((sum, v1) => v1.qtn + sum, 0)}
-            </Text>
+            </Text> */}
           </View>
 
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <Text style={Styles.orderData2}>Total Amount : </Text>
-            <Text style={Styles.orderData1}>{v.totalAmount} rs</Text>
+            <Text style={Styles.orderData1}>{v?.totalAmount} rs</Text>
           </View>
         </View>
 
         <View style={{flexDirection: 'row'}}>
           <Text style={Styles.orderData2}>Address : </Text>
-          <Text style={Styles.orderData1}>{v.address.address}</Text>
+          <Text style={Styles.orderData1}>{v?.address?.address}</Text>
         </View>
 
         <View style={Styles.detailBtnHead}>
@@ -89,7 +89,7 @@ const DataStructure = ({v, n}) => (
           </View>
           <View>
             <TouchableOpacity>
-              <Text style={Styles.delieverdText}>{v.status}</Text>
+              <Text style={Styles.delieverdText}>{v?.status}</Text>
             </TouchableOpacity>
           </View>
         </View>
