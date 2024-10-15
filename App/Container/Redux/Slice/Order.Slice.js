@@ -28,6 +28,8 @@ export const getOrder = createAsyncThunk(
         });
       });
 
+      console.log("asdasdasdasd",Orderdata);
+      
     return Orderdata;
   },
 );
@@ -36,7 +38,7 @@ export const UpdateStatus = createAsyncThunk(
   'Order/UpdateStatus',
 
   async (data) => {
-    console.log('sfdsdfdf', data);
+    console.log('sfdsdfdf', data.newdata);
 
  
     const Orderdata = [];
@@ -55,7 +57,7 @@ export const UpdateStatus = createAsyncThunk(
    
       await userDoc.update({
         Order : firebase.firestore.FieldValue.arrayUnion(
-          { ...data.newdata}
+          { ...data.newdata.data}
       )
       })
  

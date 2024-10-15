@@ -24,7 +24,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 export default function OrderDeatils({route, navigation}) {
   console.log('klklklklklk', route.params);
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState(route.params.status);
   const [items, setItems] = useState([
     {label: 'Pending', value: 'Pending'},
     {label: 'Accept', value: 'Accept'},
@@ -32,13 +32,8 @@ export default function OrderDeatils({route, navigation}) {
     {label: 'Tansisit', value: 'Tansisit'},
     {label: 'Deliver', value: 'Deliver'},
     {label: 'Cancel', value: 'Cancel'},
-
   ]);
-  const [status,setstatus] = useState(null);
-
-
-
-  
+  const [status, setstatus] = useState(null);
 
   const dispatch = useDispatch();
 
@@ -59,12 +54,17 @@ export default function OrderDeatils({route, navigation}) {
 
   console.log('dsaeee', FilterCart);
 
-  
-const handleUpdate = () => {
-  console.log("fdssdf",status);
- 
-dispatch(UpdateStatus({newdata : {status,data : route.params} , Olddata : route.params}))
-}
+  const handleUpdate = () => {
+    console.log('fdssdf', status);
+    navigation.navigate('Order');
+
+    dispatch(
+      UpdateStatus({
+        newdata: {data: {...route.params, status}},
+        Olddata: route.params,
+      }),
+    );
+  };
   //
   //   const Order = ({ v }) => (
   //     <View style={styles.ViewOrder}>
@@ -139,24 +139,23 @@ dispatch(UpdateStatus({newdata : {status,data : route.params} , Olddata : route.
       // horizontal={true}
       /> */}
 
-      <View >
+      <View>
         <Text style={{color: 'black'}}>{FilterCart?.length} item</Text>
-       
       </View>
 
       <DropDownPicker
-          open={open}
-          value={value}
-          items={items}
-          setOpen={setOpen}
-          setValue={setValue}
-          setItems={setItems}
-          onChangeValue={(values, index) => {
-            setstatus(values)
-          }}
-          style = {styles.drop}
-          placeholder={'Choose Status'}
-        />
+        open={open}
+        value={value} 
+        items={items}
+        setOpen={setOpen}
+        setValue={setValue}
+        setItems={setItems}
+        onChangeValue={(values, index) => {
+          setstatus(values);
+        }}
+        style={styles.drop}
+        placeholder={'Choose Status'}
+      />
       <FlatList
         data={FilterCart}
         renderItem={({item}) => <NewProductCard v={item} />}
@@ -165,9 +164,13 @@ dispatch(UpdateStatus({newdata : {status,data : route.params} , Olddata : route.
         // horizontal={true}
       />
 
-      <View style={{marginTop :30}}>
-        <TouchableOpacity style = {{width :90,backgroundColor:'skyblue',height :40}} onPress={() => handleUpdate()}> 
-          <Text style ={{textAlign:'center',padding:10,color : 'white'}}>Done</Text>
+      <View style={{marginTop: 30}}>
+        <TouchableOpacity
+          style={{width: 90, backgroundColor: 'skyblue', height: 40}}
+          onPress={() => handleUpdate()}>
+          <Text style={{textAlign: 'center', padding: 10, color: 'white'}}>
+            Done
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -212,10 +215,10 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
     borderTopLeftRadius: 10,
   },
-  drop : {
-    width : 150,
-    height : 30,
-    marginTop : 10,
+  drop: {
+    width: 150,
+    height: 30,
+    marginTop: 10,
     marginBottom: 10,
   },
   Color: {

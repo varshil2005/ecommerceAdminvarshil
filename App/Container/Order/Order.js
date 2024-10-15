@@ -103,6 +103,7 @@ export default function Order({route, navigation}) {
 
   useEffect(() => {
     dispatch(getOrder());
+
   }, []);
 
   const OrderDetails = useSelector(state => state.order);
