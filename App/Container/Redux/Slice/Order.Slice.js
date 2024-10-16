@@ -1,5 +1,6 @@
 import firestore, { firebase } from '@react-native-firebase/firestore';
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import { act } from 'react';
 
 
 const initialState = {
@@ -65,24 +66,20 @@ export const UpdateStatus = createAsyncThunk(
     const Orderdata = [];
 
     await firestore()
-        .collection('Order')
-        .doc(data.newdata.data.address.uid)
-        .get()
-        .then(documentSnapshot => {
-          console.log(
-            'sdfsdfsdfsdfsdfsdfsdfsdf',
-            'User exists: ',
-            documentSnapshot.exists,
-          );
+      .collection('Order')
+      .get()
+      .then(querySnapshot => {
+        console.log('Total users: ', querySnapshot.size);
+        //   console.log("lllllllllllllllllllllldfdsfs",c);
 
-          if (documentSnapshot.exists) {
-            console.log('User data: ', documentSnapshot.data());
-            Orderdata.push({
-              id: documentSnapshot.id,
-              ...documentSnapshot.data(),
-            });
-          }
+        querySnapshot.forEach(documentSnapshot => {
+          Orderdata.push({
+            id: documentSnapshot.id,
+            ...documentSnapshot.data(),
+          });
         });
+      });
+
       console.log('CartDataCartDataCartData', Orderdata);
     return Orderdata
   } catch (error) {
@@ -100,9 +97,13 @@ export const OrderSlice = createSlice({
   initialState: initialState,
   extraReducers: builder => {
     builder.addCase(getOrder.fulfilled, (state, action) => {
+      console.log("ererwer",action.payload);
+      
       state.Order = action.payload;
     });
     builder.addCase(UpdateStatus.fulfilled, (state, action) => {
+      console.log("sfdsdfsdf",action.payload);
+      
       state.Order = action.payload;
     });
   },

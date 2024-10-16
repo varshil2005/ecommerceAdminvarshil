@@ -107,13 +107,17 @@ export default function Order({route, navigation}) {
   }, []);
 
   const OrderDetails = useSelector(state => state.order);
-  console.log('qwerfgsd', OrderDetails?.Order[0]?.Order);
+  console.log('qwerfgsd', OrderDetails?.Order);
   // console.log("sasdsfdsfvvv",OrderDetails?.Order[0]?.Order[0]?.cart[0]?.qtn);
+
+  const Alldata = OrderDetails?.Order.flatMap((v, i) => v?.Order)
+  console.log("asdaaaaaasdasds",Alldata);
+  
 
   return (
     <ScrollView>
       <StatusBar backgroundColor="#F4F4F4" barStyle="dark-content" />
-      <View style={{width: '100%', height: 1000, backgroundColor: '#F4F4F4'}}>
+      <View style={{width: '100%',backgroundColor: '#F4F4F4'}}>
         {/* <View style={Styles.mainIcon}>
             <TouchableOpacity>
               <EvilIcons name="chevron-left" size={45} color="#222222" />
@@ -139,10 +143,12 @@ export default function Order({route, navigation}) {
         </View>
 
         <FlatList
-          data={OrderDetails?.Order[0]?.Order}
+          data={Alldata}
           renderItem={({item}) => <DataStructure v={item} n={navigation} />}
           keyExtractor={(item, index) => String(index)}
-          scrollEnabled={false}
+      
+     
+
         />
       </View>
     </ScrollView>
@@ -150,25 +156,28 @@ export default function Order({route, navigation}) {
 }
 
 const Styles = StyleSheet.create({
-  mainIcon: {
-    width: 1000,
-    height: 30,
-    // borderWidth: 1,
-    flexDirection: 'row',
-    // marginHorizontal: 16,
-    columnGap: 240,
-    marginTop: 10,
-  },
-  myOrderText: {
-    // width:"90%",
-    // height:30,
-    // borderWidth:1,
-    marginHorizontal: 16,
-    marginTop: 18,
-    fontFamily: 'Metropolis-Bold',
-    fontSize: 34,
-    color: '#222222',
-  },
+  // mainIcon: {
+  //   width: 1000,
+  //   height: 30,
+  //   // borderWidth: 1,
+  //   flexDirection: 'row',
+  //   // marginHorizontal: 16,
+  //   columnGap: 240,
+  //   marginTop: 10,
+  // },
+  // myOrderText: {
+  //   // width:"90%",
+  //   // height:30,
+  //   // borderWidth:1,
+  //   marginHorizontal: 16,
+  //   marginTop: 18,
+  //   fontFamily: 'Metropolis-Bold',
+  //   fontSize: 34,
+  //   color: '#222222',
+  // },
+
+
+   
   delievered: {
     width: 90,
     height: 30,
