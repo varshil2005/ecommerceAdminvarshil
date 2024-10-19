@@ -38,11 +38,15 @@ export default function Categoryf() {
     name: string()
       .required('Please enter name')
       .matches(/^[a-zA-Z ]+$/, 'Please enter valid name'),
+      desc: string()
+      .required('Please enter Desc')
+  
   });
 
   let formik = useFormik({
     initialValues: {
       name: '',
+      desc:''
     },
 
     validationSchema: userSchema,
@@ -82,7 +86,7 @@ export default function Categoryf() {
   const handleedit = async (data) => {
     setModalVisible(true);
     setValues(data)
-    setupdate(data.id)
+    setupdate(data._id)
 
   };
 
@@ -126,6 +130,17 @@ export default function Categoryf() {
             <Text style={{color: 'red'}}>
               {errors.name && touched.name ? errors.name : ''}
             </Text>
+            <TextInput
+              name="desc"
+              placeholder="Category Desc"
+              style={style.input}
+              onChangeText={handleChange('desc')}
+              value={values.desc}
+              onBlur={handleBlur('desc')}
+              placeholderTextColor={'black'}></TextInput>
+              <Text style={{color: 'red'}}>
+              {errors.desc && touched.desc ? errors.desc : ''}
+            </Text>
             <Pressable
               style={style.submitbutton}
               onPress={() => handleSubmit()}>
@@ -155,7 +170,7 @@ export default function Categoryf() {
               onPress={() => handleedit(v)}>
               <EvilIcons name="pencil" size={35} color="black"></EvilIcons>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleDelete(v.id)}>
+            <TouchableOpacity onPress={() => handleDelete(v._id)}>
               <Text>
                 <MaterialIcons
                   name="delete"

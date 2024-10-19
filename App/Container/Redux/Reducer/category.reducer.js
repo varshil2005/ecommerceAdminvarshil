@@ -31,7 +31,7 @@ export const categoryreader = (state = initialstate, action) => {
     case DELETECATEGORY:
       return {
         isLoading: false,
-        categorydata: state.categorydata.filter((v) => v.id !== action.payload),
+        categorydata: state.categorydata.filter((v) => v._id !== action.payload),
         error: null,
       };
 
@@ -39,7 +39,7 @@ export const categoryreader = (state = initialstate, action) => {
       return {
         isLoading: false,
         categorydata: state.categorydata.map((v) => {
-            if (v.id == action.payload.id) {
+            if (v._id == action.payload.id) {
                 return action.payload;
             } else {
                 return v;
